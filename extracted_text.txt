@@ -1,0 +1,297 @@
+ 
+ 
+ 
+Project Title 
+Multi-Brand Marketing Campaign Performance Analysis and 
+Prediction Using Python, SQL, and Machine Learning 
+Skills take 
+away From 
+This Project 
+●​ Python & Data Processing 
+●​ CSV to DataFrame Conversion 
+●​ Data Cleaning (Handling Missing Values & Duplicates) 
+●​ Data Preprocessing & Transformation 
+●​ Multi-Label Encoding (Channel_Used Feature Engineering) 
+●​ Feature Engineering (ROI Validation & Profit Flag Creation) 
+●​ Exploratory Data Analysis (EDA) 
+●​ Marketing Performance Analysis (Campaign, Channel & 
+Brand-wise Insights) 
+●​ SQL & MySQL Queries 
+●​ Regression Modeling (Revenue) 
+●​ Classification Modeling (Profit vs Loss Prediction) 
+●​ Model Evaluation (Accuracy, RMSE, Precision, Recall) 
+●​ Data Visualization (Seaborn / Matplotlib / Plotly) 
+●​ Dashboard Development (Streamlit) 
+●​ End-to-End Machine Learning Pipeline 
+Domain 
+Marketing Analytics & Business Intelligence 
+ 
+Problem Statement: 
+Marketing teams across multiple brands such as Nykaa, Purplle, and Tira generate 
+large volumes of campaign data, including impressions, clicks, conversion rates, 
+acquisition costs, revenue, and ROI. However, this data is often stored in raw and 
+complex formats like CSV files, making it difficult to analyze and extract meaningful 
+insights. 
+Additionally, challenges such as missing values, inconsistent ROI calculations, and 
+multiple marketing channels within a single column increase the complexity of data 
+preprocessing and impact the reliability of analysis. 
+The objective is to transform this raw data into a structured format through data 
+cleaning, preprocessing, and exploratory data analysis (EDA). This includes handling 
+
+ 
+ 
+missing values, applying multi-label encoding for categorical features, and creating new 
+features such as profit or loss indicators based on ROI. 
+This project aims to build a complete end-to-end machine learning pipeline that 
+enables candidates to: 
+●​ Clean and preprocess marketing campaign data 
+●​ Handle missing values and perform data transformation 
+●​ Apply multi-label encoding for features like marketing channels 
+●​ Perform exploratory data analysis (EDA) 
+●​ Engineer new features such as Profit/Loss classification 
+●​ Build regression models to predict revenue 
+●​ Develop classification models to predict campaign success (profit vs loss) 
+●​ Evaluate model performance using appropriate metrics 
+Objective: 
+The objective of this project is to design and implement a Marketing Campaign 
+Performance Prediction System that follows the complete machine learning lifecycle: 
+1.​ Data Collection 
+2.​ Data Cleaning & Preprocessing 
+3.​ Exploratory Data Analysis (EDA) 
+4.​ Feature Engineering (Multi-label Encoding, Profit/Loss Creation) 
+5.​ Model Building (Regression & Classification) 
+6.​ Model Evaluation and Performance Analysis 
+ 
+Approach: 
+1. Data Collection 
+●​ Import the dataset in CSV format 
+●​ Load the dataset into Python using Pandas DataFrame 
+●​ Understand the structure, columns, and data types 
+ 
+ 
+ 
+
+ 
+ 
+2. Data Preprocessing 
+●​ Handle missing values (null data) 
+●​ Remove duplicate records 
+●​ Perform data type conversion 
+●​ Clean and standardize the dataset 
+●​ Validate and correct ROI values (if required) 
+ 
+3. Feature Engineering 
+●​ Create new feature: Profit/Loss flag based on ROI 
+●​ Apply multi-label encoding for Channel_Used column 
+●​ Select relevant features for modeling 
+●​ Perform feature transformation if needed 
+ 
+4. Exploratory Data Analysis (EDA) 
+●​ Analyze campaign performance across brands 
+●​ Identify top-performing and low-performing campaigns 
+●​ Explore relationships between spend, clicks, revenue, and ROI 
+●​ Analyze channel-wise effectiveness 
+ 
+5. Model Building 
+●​ Split the dataset into training and testing sets to evaluate model performance 
+●​ Build regression models to predict Revenue based on campaign features 
+●​ Build classification models to predict Profit/Loss using the engineered Profit_Flag 
+variable 
+●​ Train models using appropriate algorithms such as Linear Regression, Logistic 
+Regression, Decision Tree, and Random Forest 
+●​ Perform feature selection and ensure no data leakage (exclude ROI from 
+classification features) 
+●​ Tune model parameters to improve performance 
+●​ Validate models using unseen test data 
+
+ 
+ 
+ 
+6. Model Evaluation 
+●​ Evaluate regression models using RMSE, MAE, R², MSE 
+●​ Evaluate classification models using Accuracy, Precision, Recall, F1-score 
+●​ Compare model performance and select the best model 
+7. Insights & Reporting 
+●​ Generate insights on campaign performance 
+●​ Identify key factors affecting profitability 
+●​ Provide data-driven recommendations for marketing strategies 
+●​ Support decision-making using model predictions 
+8. Application Development 
+Build an interactive user interface using Streamlit to: 
+1.​ Input campaign details (e.g., impressions, clicks, spend, channels, etc.) 
+2.​ Apply the same preprocessing and feature engineering steps (encoding, 
+transformations) 
+3.​ Display predicted Revenue (Regression Output) 
+4.​ Display predicted Profit/Loss (Classification Output) 
+5.​ Visualize key inputs and prediction results for better understanding 
+Dataset Description: 
+The dataset contains detailed information about marketing campaigns, customer 
+engagement, and financial performance: 
+Campaign_ID: Unique identifier for each campaign. 
+Campaign_Type: Type of marketing campaign (e.g., awareness, conversion, 
+promotion). 
+Target_Audience: Group of customers targeted by the campaign. 
+Duration: Total duration of the campaign (in days). 
+Channel_Used: Marketing channels used for the campaign (may contain multiple 
+channels). 
+
+ 
+ 
+Impressions: Number of times the campaign was displayed to users. 
+Clicks: Number of users who clicked on the campaign. 
+Leads: Number of potential customers generated. 
+Conversions: Number of successful actions (e.g., purchases or sign-ups). 
+Revenue: Total revenue generated from the campaign. 
+Acquisition_Cost: Cost incurred to run the campaign. 
+ROI: Return on Investment indicating campaign profitability. 
+Language: Language used in the campaign content. 
+Engagement_Score: Measure of user interaction and engagement level. 
+Customer_Segment: Category of customers targeted (e.g., new, returning, premium). 
+Date: Date on which the campaign was executed. 
+ 
+Dataset Link:  Marketing Campaign Performance Prediction Datasets 
+ 
+Results: 
+●​ Clean and preprocessed marketing dataset (handled missing values & 
+duplicates) 
+●​ Successful CSV to DataFrame conversion using Python 
+●​ Applied multi-label encoding for marketing channels 
+●​ Engineered new feature (Profit/Loss classification based on ROI) 
+●​ Performed effective exploratory data analysis (EDA) on campaign performance 
+●​ Built regression models to predict Revenue and ROI 
+●​ Developed classification models to predict campaign Profit/Loss 
+●​ Achieved reliable model performance using evaluation metrics 
+●​ Deployed machine learning models using Streamlit application 
+●​ End-to-end machine learning pipeline implementation 
+
+ 
+ 
+Project Evaluation metrics: 
+●​ Proper data preprocessing (handling missing values & duplicates) 
+●​ Accurate CSV to DataFrame conversion 
+●​ Effective Exploratory Data Analysis (EDA) 
+●​ Correct feature engineering (multi-label encoding, Profit/Loss creation) 
+●​ Proper handling of categorical and numerical features 
+●​ Effective model building (Regression & Classification) 
+●​ Model performance evaluation using appropriate metrics (Accuracy, RMSE, 
+Precision, Recall, F1-score) 
+●​ Avoidance of data leakage (e.g., excluding ROI in classification features) 
+●​ Efficient model selection and tuning 
+●​ Successful deployment using Streamlit application 
+●​ Clean and well-structured Python code 
+●​ Insight generation and interpretation based on model outputs 
+Technical Tags: 
+Python, CSV Data Handling, Data Preprocessing, Exploratory Data Analysis (EDA), 
+Feature Engineering, Multi-Label Encoding, Machine Learning, Regression Models, 
+Classification Models, Model Evaluation, Scikit-learn, Pandas, NumPy, Matplotlib, 
+Seaborn, Plotly, Streamlit, Marketing Analytics, Campaign Performance Analysis, 
+Business Insights. 
+ 
+Project Deliverables: 
+●​ CSV dataset (raw data file) 
+●​ Cleaned and preprocessed dataset (CSV / DataFrame) 
+●​ Feature engineered dataset (including encoded features and Profit/Loss column) 
+●​ Python script / Jupyter Notebook for data preprocessing and model building 
+●​ Regression model for Revenue / ROI prediction 
+●​ Classification model for Profit/Loss prediction 
+●​ Model evaluation report (Accuracy, RMSE, Precision, Recall, F1-score) 
+●​ Streamlit application for model deployment and predictions 
+●​ EDA report with insights 
+●​ Final project documentation file 
+ 
+
+ 
+ 
+Project Guidelines: 
+●​ Follow proper data preprocessing (handle missing values & duplicates) 
+●​ Ensure correct CSV to DataFrame conversion 
+●​ Perform meaningful Exploratory Data Analysis (EDA) 
+●​ Apply proper feature engineering (multi-label encoding, Profit/Loss creation) 
+●​ Handle categorical and numerical features appropriately 
+●​ Avoid data leakage during model building (exclude ROI in classification) 
+●​ Use appropriate machine learning algorithms for regression and classification 
+●​ Evaluate models using suitable metrics (Accuracy, RMSE, Precision, Recall, 
+F1-score) 
+●​ Maintain clean, readable, and modular Python code 
+●​ Build a user-friendly Streamlit application for predictions 
+●​ Generate clear insights from model outputs 
+●​ Provide well-structured documentation 
+ 
+References: 
+ 
+Project Live Evaluation Guidelines 
+ Project Live Evaluation 
+Project Excellence Series: Guided 
+Learning & Problem Solving [Python & 
+SQL](Tamil) 
+ Project Excellence Series: Guided 
+Learning & Problem Solving 
+[Python & SQL](Tamil) 
+Capstone Explanation Guideline 
+ Capstone Explanation Guideline 
+GitHub Reference 
+ How to Use GitHub.pptx 
+Streamlit  Reference English 
+Streamlit Recordings 
+
+ 
+ 
+Streamlit  Reference Tamil 
+Streamlit Recording Tamil 
+Project Orientation (English) 
+ 
+Project Orientation (Tamil) 
+ 
+ 
+Timeline: 
+The project must be completed and submitted within 10 days from the assigned date. 
+ 
+PROJECT DOUBT CLARIFICATION SESSION ( PROJECT AND CLASS DOUBTS) 
+ 
+PROJECT DOUBT CLARIFICATION SESSION ( PROJECT AND CLASS DOUBTS) 
+ 
+About Session: The Project Doubt Clarification Session is a helpful resource for resolving 
+questions and concerns about projects and class topics. It provides support in 
+understanding project requirements, addressing code issues, and clarifying class concepts. 
+The session aims to enhance comprehension and provide guidance to overcome challenges 
+effectively. 
+Note: You can join the doubt session using the link provided in sheet given below 
+ 
+Timing: Monday-Saturday (3:30PM to 4:30PM) 
+​
+Session Link :Project Doubt Session [DS/AIML] 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+LIVE EVALUATION SESSION (CAPSTONE AND FINAL PROJECT) 
+ 
+About Session: The Live Evaluation Session for Capstone and Final Projects allows 
+participants to showcase their projects and receive real-time feedback for improvement. It 
+assesses project quality and provides an opportunity for discussion and evaluation. 
+ 
+Note: This form will Open only on Saturday (after 2 PM ) and Sunday on Every Week 
+ 
+Timing:  Monday-Saturday (05:30PM to 07:00PM) 
+ 
+Booking link : https://forms.gle/1m2Gsro41fLtZurRA 
+     
+ 
+Created By: 
+Verified By: 
+Approved By: 
+VIGNESH P 
+ 
+Selvamani A
+ 
+ 
