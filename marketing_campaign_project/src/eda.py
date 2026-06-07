@@ -3,145 +3,122 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+import plotly.graph_objects as go
 import os
 import logging
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("pipeline.log"),
+        logging.StreamHandler()
+    ]
+)
 
-def perform_eda(input_path, reports_dir):
+def perform_eda(input_path, output_dir):
     """
-    Performs Exploratory Data Analysis and generates an EDA report.
+    Performs comprehensive EDA and generates professional visualizations.
     """
-    logging.info(f"Loading engineered data from {input_path}")
-    try:
-        df = pd.read_csv(input_path)
-    except FileNotFoundError:
-        logging.error(f"File not found: {input_path}")
+    logging.info(f"Loading engineered data for EDA from {input_path}")
+    if not os.path.exists(input_path):
+        logging.error(f"Input file not found: {input_path}")
         return
 
-    img_dir = os.path.join(reports_dir, 'images')
+    df = pd.read_csv(input_path)
+    if 'Date' in df.columns:
+        df['Date'] = pd.to_datetime(df['Date'])
+
+    img_dir = os.path.join(output_dir, 'images')
+    html_dir = os.path.join(output_dir, 'interactive')
     os.makedirs(img_dir, exist_ok=True)
+    os.makedirs(html_dir, exist_ok=True)
 
-    logging.info("Generating Visualizations...")
+    # Set visualization style
+    sns.set_theme(style="whitegrid", palette="muted")
+    plt.rcParams['figure.figsize'] = (12, 7)
 
-    # Set seaborn style
-    sns.set_theme(style="whitegrid")
+    # 1. Brand Comparison Analysis
+    logging.info("Analyzing Brand performance...")
+    brand_stats = df.groupby('Brand').agg({
+        'Revenue': 'sum',
+        'ROI': 'mean',
+        'Conversion_Rate': 'mean',
+        'Customer_Segment': 'count'
+    }).reset_index().rename(columns={'Customer_Segment': 'Campaign_Count'})
+    
+    fig = px.bar(brand_stats, x='Brand', y='Revenue', color='Brand', 
+                 title='Total Revenue by Brand', text_auto='.2s',
+                 template='plotly_white')
+    fig.write_html(os.path.join(html_dir, 'brand_revenue.html'))
+    
+    # 2. Campaign Type Analysis
+    logging.info("Analyzing Campaign Types...")
+    fig = px.box(df, x='Campaign_Type', y='ROI', color='Brand',
+                 title='ROI Distribution by Campaign Type & Brand',
+                 template='plotly_white')
+    fig.write_html(os.path.join(html_dir, 'roi_by_campaign_type.html'))
 
-    # 1. Revenue by Brand
-    plt.figure(figsize=(8, 5))
-    if 'Brand' in df.columns and 'Revenue' in df.columns:
-        sns.barplot(data=df, x='Brand', y='Revenue', estimator=np.sum, errorbar=None)
-        plt.title('Total Revenue by Brand')
-        plt.savefig(os.path.join(img_dir, 'revenue_by_brand.png'))
-        plt.close()
+    # 3. Channel Performance
+    logging.info("Analyzing Channels...")
+    channel_cols = [c for c in df.columns if c.startswith('Channel_')]
+    channel_perf = []
+    for col in channel_cols:
+        cname = col.replace('Channel_', '')
+        rev = df[df[col] == 1]['Revenue'].sum()
+        roi = df[df[col] == 1]['ROI'].mean()
+        channel_perf.append({'Channel': cname, 'Total_Revenue': rev, 'Avg_ROI': roi})
+    
+    perf_df = pd.DataFrame(channel_perf).sort_values('Total_Revenue', ascending=False)
+    fig = px.bar(perf_df, x='Channel', y='Total_Revenue', color='Avg_ROI',
+                 title='Channel Performance: Revenue vs ROI',
+                 color_continuous_scale='Viridis', template='plotly_white')
+    fig.write_html(os.path.join(html_dir, 'channel_performance.html'))
 
-    # 2. ROI by Campaign Type
-    plt.figure(figsize=(10, 6))
-    if 'Campaign_Type' in df.columns and 'ROI' in df.columns:
-        sns.boxplot(data=df, x='Campaign_Type', y='ROI')
-        plt.title('ROI Distribution by Campaign Type')
-        plt.xticks(rotation=45)
-        plt.savefig(os.path.join(img_dir, 'roi_by_campaign_type.png'))
-        plt.close()
+    # 4. Customer Segment & Language
+    logging.info("Analyzing Segments and Languages...")
+    fig = px.sunburst(df, path=['Brand', 'Customer_Segment', 'Language'], values='Revenue',
+                      title='Revenue Distribution: Brand > Segment > Language',
+                      template='plotly_white')
+    fig.write_html(os.path.join(html_dir, 'revenue_sunburst.html'))
 
-    # 3. Top performing campaigns (by Revenue)
-    if 'Campaign_ID' in df.columns and 'Revenue' in df.columns:
-        top_campaigns = df.groupby('Campaign_ID')['Revenue'].sum().nlargest(10).reset_index()
-        plt.figure(figsize=(10, 6))
-        sns.barplot(data=top_campaigns, x='Revenue', y='Campaign_ID', palette='viridis')
-        plt.title('Top 10 Campaigns by Revenue')
-        plt.savefig(os.path.join(img_dir, 'top_campaigns.png'))
-        plt.close()
+    # 5. Revenue Trends over Time
+    logging.info("Analyzing Revenue Trends...")
+    if 'Date' in df.columns:
+        df_sorted = df.sort_values('Date')
+        daily_rev = df_sorted.groupby(['Date', 'Brand'])['Revenue'].sum().reset_index()
+        fig = px.line(daily_rev, x='Date', y='Revenue', color='Brand',
+                      title='Daily Revenue Trends by Brand',
+                      template='plotly_white')
+        fig.write_html(os.path.join(html_dir, 'revenue_trends.html'))
 
-    # 4. Lowest performing campaigns (by ROI)
-    if 'Campaign_ID' in df.columns and 'ROI' in df.columns:
-        lowest_campaigns = df.groupby('Campaign_ID')['ROI'].mean().nsmallest(10).reset_index()
-        plt.figure(figsize=(10, 6))
-        sns.barplot(data=lowest_campaigns, x='ROI', y='Campaign_ID', palette='Reds_r')
-        plt.title('Bottom 10 Campaigns by Average ROI')
-        plt.savefig(os.path.join(img_dir, 'lowest_campaigns.png'))
-        plt.close()
-
-    # 5. Channel Effectiveness (Total Revenue per Channel)
-    channel_cols = [c for c in df.columns if c.startswith('Channel_') and c != 'Channel_Used']
-    if channel_cols and 'Revenue' in df.columns:
-        channel_revenue = {}
-        for col in channel_cols:
-            channel_revenue[col.replace('Channel_', '')] = df[df[col] == 1]['Revenue'].sum()
-        
-        channel_df = pd.DataFrame(list(channel_revenue.items()), columns=['Channel', 'Total_Revenue']).sort_values(by='Total_Revenue', ascending=False)
-        plt.figure(figsize=(10, 6))
-        sns.barplot(data=channel_df, x='Total_Revenue', y='Channel', palette='Blues_r')
-        plt.title('Channel Effectiveness (Total Revenue)')
-        plt.savefig(os.path.join(img_dir, 'channel_effectiveness.png'))
-        plt.close()
-
-    # 6. Correlation Heatmap
-    plt.figure(figsize=(12, 8))
-    numeric_df = df.select_dtypes(include=[np.number])
-    corr = numeric_df.corr()
-    sns.heatmap(corr, annot=False, cmap='coolwarm', fmt=".2f", linewidths=0.5)
-    plt.title('Correlation Heatmap')
+    # 6. Correlation Heatmap (Static)
+    logging.info("Generating Correlation Heatmap...")
+    plt.figure(figsize=(12, 10))
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    # Filter out binary encoded channels for cleaner heatmap
+    core_cols = [c for c in numeric_cols if not c.startswith('Channel_')]
+    corr = df[core_cols].corr()
+    sns.heatmap(corr, annot=True, cmap='RdBu_r', fmt=".2f", center=0)
+    plt.title('Core Metric Correlation Matrix')
     plt.tight_layout()
     plt.savefig(os.path.join(img_dir, 'correlation_heatmap.png'))
     plt.close()
 
-    # 7. Revenue Distribution
-    plt.figure(figsize=(8, 5))
-    if 'Revenue' in df.columns:
-        sns.histplot(df['Revenue'], bins=50, kde=True)
-        plt.title('Revenue Distribution')
-        plt.savefig(os.path.join(img_dir, 'revenue_distribution.png'))
-        plt.close()
+    # 7. Distributions (Histograms)
+    logging.info("Generating Distributions...")
+    metrics = ['Revenue', 'ROI', 'CTR', 'Conversion_Rate']
+    for metric in metrics:
+        if metric in df.columns:
+            fig = px.histogram(df, x=metric, color='Brand', marginal='box',
+                               title=f'{metric} Distribution by Brand',
+                               template='plotly_white', barmode='overlay')
+            fig.write_html(os.path.join(html_dir, f'{metric}_distribution.html'))
 
-    # 8. Acquisition Cost Distribution
-    plt.figure(figsize=(8, 5))
-    if 'Acquisition_Cost' in df.columns:
-        sns.histplot(df['Acquisition_Cost'], bins=50, kde=True, color='orange')
-        plt.title('Acquisition Cost Distribution')
-        plt.savefig(os.path.join(img_dir, 'acquisition_cost_distribution.png'))
-        plt.close()
-
-    # 9. Customer Segment Analysis
-    plt.figure(figsize=(8, 5))
-    if 'Customer_Segment' in df.columns and 'Revenue' in df.columns:
-        sns.barplot(data=df, x='Customer_Segment', y='Revenue', estimator=np.sum, errorbar=None)
-        plt.title('Total Revenue by Customer Segment')
-        plt.savefig(os.path.join(img_dir, 'customer_segment_analysis.png'))
-        plt.close()
-
-    # 10. Language Analysis
-    plt.figure(figsize=(8, 5))
-    if 'Language' in df.columns and 'Revenue' in df.columns:
-        sns.barplot(data=df, x='Language', y='Revenue', estimator=np.sum, errorbar=None)
-        plt.title('Total Revenue by Language')
-        plt.savefig(os.path.join(img_dir, 'language_analysis.png'))
-        plt.close()
-
-    # Generate Markdown Report
-    logging.info("Generating EDA Report...")
-    report_content = f"""# Exploratory Data Analysis Report
-
-## Business Insights
-1. **Revenue by Brand**: Visualizes which brand brings the most revenue.
-2. **Channel Effectiveness**: Helps identify the best-performing marketing channels based on total revenue.
-3. **Campaign Performance**: Highlights the top 10 revenue-generating campaigns and the bottom 10 lowest ROI campaigns.
-
-## Key Findings
-- **Data Quality**: The dataset originally contained nulls which have been successfully imputed. Outliers were capped using the IQR method.
-- **Correlations**: The heatmap shows strong correlations between target variables like Revenue and performance metrics like Conversions.
-- **Distributions**: Revenue and Acquisition Cost display normal/skewed distributions which were handled via capping.
-
-## Recommendations
-- **Allocate Budget Efficiently**: Reinvest heavily in the top marketing channels identified in the 'Channel Effectiveness' chart.
-- **Optimize Low ROI Campaigns**: Investigate the campaigns listed in the 'Bottom 10 Campaigns' to identify weak points in targeting or ad creatives.
-- **Focus on High-Value Segments**: Leverage insights from the Customer Segment analysis to target the most profitable audience.
-"""
-    
-    with open(os.path.join(reports_dir, 'eda_report.md'), 'w') as f:
-        f.write(report_content)
-
-    logging.info("EDA completed successfully.")
+    logging.info("EDA visualizations generated successfully.")
 
 if __name__ == "__main__":
+    # Ensure reports directory exists
+    os.makedirs('reports', exist_ok=True)
     perform_eda('data/processed/engineered_data.csv', 'reports')

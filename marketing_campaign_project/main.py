@@ -1,55 +1,151 @@
 import os
 import logging
 import sys
+from pathlib import Path
 
-# Add src to Python path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+# Load centralized config
+from config import (
+    RAW_DATA_FILE, CLEANED_DATA_FILE, ENGINEERED_DATA_FILE,
+    REVENUE_MODEL_FILE, PROFIT_CLASSIFIER_FILE,
+    REPORTS_DIR, LOG_FILE,
+    ensure_directories, validate_project_structure
+)
 
-from data_cleaning import clean_data
-from feature_engineering import engineer_features
-from eda import perform_eda
-from train_regression import train_regression
-from train_classification import train_classification
-from evaluate_models import evaluate_and_report
+# Fix for potential typo in config or missing import
+try:
+    from config import SRC_DIR
+except ImportError:
+    SRC_DIR = Path(__file__).resolve().parent / "src"
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Ensure src is in path
+sys.path.append(str(SRC_DIR))
 
-def main():
-    logging.info("Starting Marketing Campaign Analytics Pipeline...")
+from src.data_cleaning import clean_data
+from src.feature_engineering import engineer_features
+from src.eda import perform_eda
+from src.train_regression import train_regression
+from src.train_classification import train_classification
+from src.evaluate_models import evaluate_and_report
 
-    # Define paths
-    raw_data_path = 'data/raw/marketing_campaign.csv'
-    cleaned_data_path = 'data/processed/cleaned_data.csv'
-    engineered_data_path = 'data/processed/engineered_data.csv'
-    reports_dir = 'reports'
-    revenue_model_path = 'models/revenue_model.pkl'
-    profit_model_path = 'models/profit_classifier.pkl'
+# Configure master logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
+)
 
-    # Step 1 & 2: Data Cleaning
-    logging.info("--- Phase: Data Cleaning ---")
-    clean_data(raw_data_path, cleaned_data_path)
+def run_pipeline():
+    logging.info("==================================================")
+    logging.info("STARTING MARKETING INTELLIGENCE PIPELINE")
+    logging.info("==================================================")
 
-    # Step 3: Feature Engineering
-    logging.info("--- Phase: Feature Engineering ---")
-    engineer_features(cleaned_data_path, engineered_data_path)
+    # 0. Startup Validation
+    logging.info("Step 0: Validating Project Structure...")
+    struct_status = validate_project_structure()
+    for name, stat in struct_status.items():
+        logging.info(f"- {name}: {stat}")
+    
+    if "FAIL" in struct_status.values():
+        logging.error("CRITICAL: Project structure is invalid. Check missing directories.")
+        return
 
-    # Step 4: Exploratory Data Analysis
-    logging.info("--- Phase: Exploratory Data Analysis ---")
-    perform_eda(engineered_data_path, reports_dir)
+    # Ensure output directories exist
+    ensure_directories()
 
-    # Step 5: Regression Model
-    logging.info("--- Phase: Regression Modeling ---")
-    train_regression(engineered_data_path, revenue_model_path)
+    # Checklist for final report
+    checklist = {
+        "Data Merging": "PENDING",
+        "Data Cleaning": "PENDING",
+        "Feature Engineering": "PENDING",
+        "EDA Reports": "PENDING",
+        "Regression Modeling": "PENDING",
+        "Classification Modeling": "PENDING",
+        "System Evaluation": "PENDING"
+    }
 
-    # Step 6: Classification Model
-    logging.info("--- Phase: Classification Modeling ---")
-    train_classification(engineered_data_path, profit_model_path)
+    # 1. Check for Raw Data
+    if not RAW_DATA_FILE.exists():
+        logging.warning(f"MISSING: {RAW_DATA_FILE}")
+        logging.info("Fix: Run 'python merge_data.py' to generate the merged dataset.")
+        return
+    checklist["Data Merging"] = "PASS"
 
-    # Step 7: Model Evaluation
-    logging.info("--- Phase: Model Evaluation & Reporting ---")
-    evaluate_and_report()
+    # 2. Data Cleaning
+    logging.info("PHASE 1: Data Validation & Cleaning...")
+    try:
+        clean_data(str(RAW_DATA_FILE), str(CLEANED_DATA_FILE))
+        if CLEANED_DATA_FILE.exists():
+            checklist["Data Cleaning"] = "PASS"
+        else:
+            raise FileNotFoundError("Cleaned data file was not created.")
+    except Exception as e:
+        logging.error(f"FAIL: Data Cleaning failed: {e}")
+        return
 
-    logging.info("Pipeline executed successfully! You can now run the Streamlit app: `streamlit run app/streamlit_app.py`")
+    # 3. Feature Engineering
+    logging.info("PHASE 2: Business Feature Engineering...")
+    try:
+        engineer_features(str(CLEANED_DATA_FILE), str(ENGINEERED_DATA_FILE))
+        if ENGINEERED_DATA_FILE.exists():
+            checklist["Feature Engineering"] = "PASS"
+        else:
+            raise FileNotFoundError("Engineered data file was not created.")
+    except Exception as e:
+        logging.error(f"FAIL: Feature Engineering failed: {e}")
+        return
+
+    # 4. EDA
+    logging.info("PHASE 3: Exploratory Data Analysis & Visualization...")
+    try:
+        perform_eda(str(ENGINEERED_DATA_FILE), str(REPORTS_DIR))
+        checklist["EDA Reports"] = "PASS"
+    except Exception as e:
+        logging.error(f"FAIL: EDA failed: {e}")
+        # Continue anyway as modeling might still work
+
+    # 5. Modeling - Regression
+    logging.info("PHASE 4: Training Revenue Prediction Models...")
+    try:
+        train_regression(str(ENGINEERED_DATA_FILE), str(REVENUE_MODEL_FILE))
+        if REVENUE_MODEL_FILE.exists():
+            checklist["Regression Modeling"] = "PASS"
+    except Exception as e:
+        logging.error(f"FAIL: Regression training failed: {e}")
+
+    # 6. Modeling - Classification
+    logging.info("PHASE 5: Training Profitability Classification Models...")
+    try:
+        train_classification(str(ENGINEERED_DATA_FILE), str(PROFIT_CLASSIFIER_FILE))
+        if PROFIT_CLASSIFIER_FILE.exists():
+            checklist["Classification Modeling"] = "PASS"
+    except Exception as e:
+        logging.error(f"FAIL: Classification training failed: {e}")
+
+    # 7. Evaluation
+    logging.info("PHASE 6: System Evaluation & Aggregation...")
+    try:
+        evaluate_and_report()
+        checklist["System Evaluation"] = "PASS"
+    except Exception as e:
+        logging.error(f"FAIL: Evaluation failed: {e}")
+
+    logging.info("\n" + "="*50)
+    logging.info("FINAL PIPELINE VALIDATION CHECKLIST")
+    logging.info("="*50)
+    for task, status in checklist.items():
+        logging.info(f"{task:<25}: {status}")
+    logging.info("="*50)
+    
+    if all(s == "PASS" for s in checklist.values()):
+        logging.info("SUCCESS: Full Pipeline Executed Successfully!")
+    else:
+        logging.warning("COMPLETED: Pipeline finished with some warnings/failures.")
+    
+    logging.info(f"Streamlit Dashboard: streamlit run app/streamlit_app.py")
+    logging.info("="*50)
 
 if __name__ == "__main__":
-    main()
+    run_pipeline()

@@ -1,88 +1,100 @@
 import pandas as pd
 import numpy as np
 import logging
-from sklearn.preprocessing import MultiLabelBinarizer
+import os
 import ast
+from sklearn.preprocessing import MultiLabelBinarizer
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("pipeline.log"),
+        logging.StreamHandler()
+    ]
+)
 
 def engineer_features(input_path, output_path):
     """
-    Applies feature engineering to the cleaned data.
+    Advanced Feature Engineering for Marketing Intelligence.
     """
-    logging.info(f"Loading cleaned data from {input_path}")
-    try:
-        df = pd.read_csv(input_path)
-    except FileNotFoundError:
-        logging.error(f"File not found: {input_path}")
-        return
+    logging.info(f"Loading cleaned data for feature engineering from {input_path}")
+    if not os.path.exists(input_path):
+        logging.error(f"Input file not found: {input_path}")
+        return None
 
-    # 1. Profit_Flag
-    logging.info("Creating Profit_Flag...")
+    df = pd.read_csv(input_path)
+
+    # 1. Profit_Flag (Logic strictly ROI > 0)
+    logging.info("Creating Profit_Flag (ROI > 0 threshold)...")
     if 'ROI' in df.columns:
-        # Check if there are any negative ROIs. If not, split by median to allow classification.
-        if (df['ROI'] <= 0).sum() == 0:
-            median_roi = df['ROI'].median()
-            logging.info(f"No negative ROI found. Splitting Profit_Flag by median ROI ({median_roi:.2f}) to enable classification.")
-            df['Profit_Flag'] = np.where(df['ROI'] > median_roi, 'Profit', 'Loss')
-        else:
-            df['Profit_Flag'] = np.where(df['ROI'] > 0, 'Profit', 'Loss')
+        df['Profit_Flag'] = np.where(df['ROI'] > 0, 'Profit', 'Loss')
+        logging.info(f"Profit_Flag distribution:\n{df['Profit_Flag'].value_counts().to_string()}")
 
     # 2. Multi-label Encoding for Channel_Used
     logging.info("Applying multi-label encoding for Channel_Used...")
     if 'Channel_Used' in df.columns:
-        # Some fields might be strings like "Facebook, Instagram" or "['Facebook', 'Instagram']"
-        # We need to ensure it's a list.
         def parse_channels(val):
             if pd.isna(val) or val == 'Unknown':
                 return []
             if isinstance(val, str):
-                # Try to parse string representation of list safely
                 if val.startswith('['):
-                    try:
-                        return ast.literal_eval(val)
-                    except:
-                        pass
-                # Otherwise assume comma-separated
-                return [x.strip() for x in val.split(',')]
+                    try: return ast.literal_eval(val)
+                    except: pass
+                # Clean and split common patterns
+                cleaned = val.replace('&', ',').replace('+', ',')
+                return [x.strip() for x in cleaned.split(',')]
             return val
 
         df['Channel_Used_List'] = df['Channel_Used'].apply(parse_channels)
-        
         mlb = MultiLabelBinarizer()
         channel_encoded = mlb.fit_transform(df['Channel_Used_List'])
-        channel_classes = [f"Channel_{c}" for c in mlb.classes_]
-        
+        channel_classes = [f"Channel_{c.replace(' ', '_')}" for c in mlb.classes_]
         channel_df = pd.DataFrame(channel_encoded, columns=channel_classes, index=df.index)
-        df = pd.concat([df, channel_df], axis=1)
-        
-        # We can drop the temporary list column
-        df.drop(columns=['Channel_Used_List'], inplace=True)
+        df = pd.concat([df, channel_df], axis=1).drop(columns=['Channel_Used_List'])
 
-    # 3. Additional Features
-    logging.info("Creating additional performance features...")
+    # 3. Core Marketing KPIs
+    logging.info("Calculating advanced Marketing KPIs...")
     
-    # Safely handle division by zero
-    def safe_divide(numerator, denominator):
-        return np.where(denominator == 0, 0, numerator / denominator)
+    # Helper to avoid division by zero
+    def safe_div(num, den):
+        return np.where(den == 0, 0, num / den)
 
-    if 'Clicks' in df.columns and 'Impressions' in df.columns:
-        df['CTR'] = safe_divide(df['Clicks'], df['Impressions'])
+    # Requested Primary KPIs
+    df['CTR'] = safe_div(df['Clicks'], df['Impressions'])
+    df['Conversion_Rate'] = safe_div(df['Conversions'], df['Clicks'])
+    df['Cost_Per_Lead'] = safe_div(df['Acquisition_Cost'], df['Leads'])
+    df['Revenue_Per_Conversion'] = safe_div(df['Revenue'], df['Conversions'])
 
-    if 'Conversions' in df.columns and 'Clicks' in df.columns:
-        df['Conversion_Rate'] = safe_divide(df['Conversions'], df['Clicks'])
+    # Requested Additional KPIs
+    df['Cost_Per_Click'] = safe_div(df['Acquisition_Cost'], df['Clicks'])
+    df['Lead_Conversion_Rate'] = safe_div(df['Conversions'], df['Leads'])
+    df['Revenue_Per_Click'] = safe_div(df['Revenue'], df['Clicks'])
+    df['Revenue_Per_Lead'] = safe_div(df['Revenue'], df['Leads'])
+    
+    # Profit Margin = (Revenue - Cost) / Revenue
+    df['Profit_Margin'] = safe_div(df['Revenue'] - df['Acquisition_Cost'], df['Revenue'])
+    
+    # Marketing Efficiency Score (MES) - Harmonic balance of ROI and Conversion Rate
+    # Normalize ROI first to a 0-1 scale for the score if possible, or use a weighted approach.
+    # Simple MES: ROI * Conversion_Rate (Interaction feature)
+    df['Marketing_Efficiency_Score'] = df['ROI'] * df['Conversion_Rate']
 
-    if 'Acquisition_Cost' in df.columns and 'Leads' in df.columns:
-        df['Cost_Per_Lead'] = safe_divide(df['Acquisition_Cost'], df['Leads'])
+    # 4. Time-based Features
+    if 'Date' in df.columns:
+        df['Date'] = pd.to_datetime(df['Date'])
+        df['Month'] = df['Date'].dt.month
+        df['DayOfWeek'] = df['Date'].dt.dayofweek
+        df['IsWeekend'] = df['DayOfWeek'].apply(lambda x: 1 if x >= 5 else 0)
 
-    if 'Revenue' in df.columns and 'Conversions' in df.columns:
-        df['Revenue_Per_Conversion'] = safe_divide(df['Revenue'], df['Conversions'])
+    # Clean up any potential INF or NAN from engineering
+    df.replace([np.inf, -np.inf], 0, inplace=True)
+    df.fillna(0, inplace=True)
 
-    logging.info(f"Saving engineered data to {output_path}")
-    import os
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     df.to_csv(output_path, index=False)
-    logging.info("Feature engineering completed successfully.")
+    logging.info(f"Engineered data saved to {output_path}. Total features: {df.shape[1]}")
     return df
 
 if __name__ == "__main__":

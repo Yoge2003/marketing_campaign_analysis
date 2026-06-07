@@ -1,0 +1,532 @@
+2026-06-05 09:54:58,390 - INFO - Starting Data Merging Phase...
+2026-06-05 09:54:58,458 - INFO - Loaded Nykaa dataset: 55555 rows, 16 columns
+2026-06-05 09:54:58,518 - INFO - Loaded Purplle dataset: 55555 rows, 16 columns
+2026-06-05 09:54:58,580 - INFO - Loaded Tira dataset: 55555 rows, 16 columns
+2026-06-05 09:54:58,585 - INFO - Merged Dataset Statistics:
+2026-06-05 09:54:58,585 - INFO - Total Rows: 166665
+2026-06-05 09:54:58,585 - INFO - Total Columns: 17
+2026-06-05 09:54:58,589 - INFO - Brand-wise breakdown:
+Brand
+Nykaa      55555
+Purplle    55555
+Tira       55555
+2026-06-05 09:54:59,613 - INFO - Successfully saved merged dataset to data/raw/marketing_campaign.csv
+2026-06-05 09:58:07,958 - INFO - ==================================================
+2026-06-05 09:58:07,958 - INFO - STARTING MARKETING INTELLIGENCE PIPELINE
+2026-06-05 09:58:07,958 - INFO - ==================================================
+2026-06-05 09:58:07,958 - INFO - PHASE 1: Data Validation & Cleaning...
+2026-06-05 09:58:07,958 - INFO - Loading raw data for cleaning from data/raw/marketing_campaign.csv
+2026-06-05 09:58:08,300 - INFO - Removed 0 duplicates.
+2026-06-05 09:58:08,301 - INFO - Validating dates...
+2026-06-05 09:58:08,314 - WARNING - Found 8099 invalid dates. Filling with most frequent date.
+2026-06-05 09:58:08,319 - INFO - Analyzing and handling missing values...
+2026-06-05 09:58:08,342 - INFO - Null Percentages:
+Campaign_ID         3.250233
+Campaign_Type       5.014850
+Target_Audience     4.903249
+Duration            4.993850
+Channel_Used        4.969250
+Impressions         4.934449
+Clicks              4.934449
+Leads               4.854049
+Conversions         4.800048
+Revenue             4.982450
+Acquisition_Cost    4.896649
+ROI                 4.978850
+Language            4.979450
+Engagement_Score    4.848648
+Customer_Segment    4.905049
+2026-06-05 09:58:08,621 - INFO - Recalculating ROI for consistency...
+2026-06-05 09:58:08,623 - INFO - Capping outliers at 1st and 99th percentiles...
+2026-06-05 09:58:09,506 - INFO - Cleaned data saved to data/processed/cleaned_data.csv (Final Rows: 166665)
+2026-06-05 09:58:09,509 - INFO - PHASE 2: Business Feature Engineering...
+2026-06-05 09:58:09,509 - INFO - Loading cleaned data for feature engineering from data/processed/cleaned_data.csv
+2026-06-05 09:58:09,728 - INFO - Creating Profit_Flag (ROI > 0 threshold)...
+2026-06-05 09:58:09,744 - INFO - Profit_Flag distribution:
+Profit_Flag
+Profit    166654
+Loss          11
+2026-06-05 09:58:09,744 - INFO - Applying multi-label encoding for Channel_Used...
+2026-06-05 09:58:10,028 - INFO - Calculating advanced Marketing KPIs...
+2026-06-05 09:58:12,236 - INFO - Engineered data saved to data/processed/engineered_data.csv. Total features: 37
+2026-06-05 09:58:12,241 - INFO - PHASE 3: Exploratory Data Analysis & Visualization...
+2026-06-05 09:58:12,241 - INFO - Loading engineered data for EDA from data/processed/engineered_data.csv
+2026-06-05 09:58:12,702 - INFO - Analyzing Brand performance...
+2026-06-05 09:58:13,019 - INFO - Analyzing Campaign Types...
+2026-06-05 09:58:13,181 - INFO - Analyzing Channels...
+2026-06-05 09:58:13,286 - INFO - Analyzing Segments and Languages...
+2026-06-05 09:58:13,578 - INFO - Analyzing Revenue Trends...
+2026-06-05 09:58:13,664 - INFO - Generating Correlation Heatmap...
+2026-06-05 09:58:14,345 - INFO - Generating Distributions...
+2026-06-05 09:58:14,740 - INFO - EDA visualizations generated successfully.
+2026-06-05 09:58:14,749 - INFO - PHASE 4: Training Revenue Prediction Models...
+2026-06-05 09:58:14,749 - INFO - Loading data for regression training from data/processed/engineered_data.csv
+2026-06-05 09:58:15,286 - INFO - Training and Tuning Linear Regression...
+2026-06-05 09:58:16,633 - INFO - Linear Regression Results -> RMSE: 246620.23, R2: 0.70
+2026-06-05 09:58:16,633 - INFO - Training and Tuning Random Forest...
+2026-06-05 10:05:46,200 - INFO - Random Forest Results -> RMSE: 237030.18, R2: 0.73
+2026-06-05 10:05:46,201 - INFO - Training and Tuning Gradient Boosting...
+2026-06-05 10:07:26,693 - INFO - Gradient Boosting Results -> RMSE: 237183.38, R2: 0.73
+2026-06-05 10:07:26,693 - INFO - Training and Tuning XGBoost...
+2026-06-05 10:07:30,560 - INFO - XGBoost Results -> RMSE: 236986.22, R2: 0.73
+2026-06-05 10:07:30,562 - INFO - Winner: XGBoost (R2: 0.73)
+2026-06-05 10:07:30,730 - INFO - Saved best regression model to models/revenue_model.pkl
+2026-06-05 10:07:30,749 - INFO - PHASE 5: Training Profitability Classification Models...
+2026-06-05 10:07:30,749 - INFO - Loading data for classification training from data/processed/engineered_data.csv
+2026-06-05 10:07:31,315 - INFO - Training and Tuning Logistic Regression...
+2026-06-05 10:08:04,578 - INFO - Logistic Regression Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:08:04,578 - INFO - Training and Tuning Random Forest...
+2026-06-05 10:08:11,956 - INFO - Random Forest Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:08:11,956 - INFO - Training and Tuning Gradient Boosting...
+2026-06-05 10:09:16,004 - INFO - Gradient Boosting Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:09:16,005 - INFO - Training and Tuning XGBoost...
+2026-06-05 10:09:18,285 - INFO - XGBoost Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:09:18,286 - INFO - Winner: Random Forest (F1: 1.00)
+2026-06-05 10:09:18,448 - INFO - Saved best classification model to models/profit_classifier.pkl
+2026-06-05 10:09:18,458 - INFO - PHASE 6: System Evaluation & Aggregation...
+2026-06-05 10:09:18,458 - INFO - Starting Final Model Evaluation...
+2026-06-05 10:09:18,464 - INFO - 
+--- Regression Model Comparison ---
+                            RMSE            MAE        R2
+XGBoost            236986.219517  160255.494783  0.726688
+Random Forest      237030.176606  159910.047700  0.726586
+Gradient Boosting  237183.375645  161107.346003  0.726233
+Linear Regression  246620.234240  165431.858328  0.704014
+2026-06-05 10:09:18,464 - INFO - Winner: XGBoost
+2026-06-05 10:09:18,478 - INFO - 
+--- Classification Model Comparison ---
+                     Accuracy  Precision   Recall       F1   ROC_AUC
+Random Forest         0.99994    0.99994  1.00000  0.99997  0.999175
+XGBoost               0.99994    0.99994  1.00000  0.99997  0.999745
+Gradient Boosting     0.99982    0.99994  0.99988  0.99991  0.998717
+Logistic Regression   0.99916    0.99997  0.99919  0.99958  0.998830
+2026-06-05 10:09:18,479 - INFO - Winner: Random Forest
+2026-06-05 10:09:18,479 - INFO - ==================================================
+2026-06-05 10:09:18,479 - INFO - PIPELINE EXECUTION COMPLETE
+2026-06-05 10:09:18,479 - INFO - Streamlit Dashboard: `streamlit run app/streamlit_app.py` or `python -m streamlit run app/streamlit_app.py` 
+2026-06-05 10:09:18,479 - INFO - ==================================================
+2026-06-05 10:14:23,197 - INFO - Starting Data Merging Phase...
+2026-06-05 10:14:23,263 - INFO - Loaded Nykaa dataset: 55555 rows, 16 columns
+2026-06-05 10:14:23,325 - INFO - Loaded Purplle dataset: 55555 rows, 16 columns
+2026-06-05 10:14:23,387 - INFO - Loaded Tira dataset: 55555 rows, 16 columns
+2026-06-05 10:14:23,391 - INFO - Merged Dataset Statistics:
+2026-06-05 10:14:23,391 - INFO - Total Rows: 166665
+2026-06-05 10:14:23,392 - INFO - Total Columns: 17
+2026-06-05 10:14:23,395 - INFO - Brand-wise breakdown:
+Brand
+Nykaa      55555
+Purplle    55555
+Tira       55555
+2026-06-05 10:14:24,356 - INFO - Successfully saved merged dataset to data/raw/marketing_campaign.csv
+2026-06-05 10:14:31,317 - INFO - ==================================================
+2026-06-05 10:14:31,317 - INFO - STARTING MARKETING INTELLIGENCE PIPELINE
+2026-06-05 10:14:31,317 - INFO - ==================================================
+2026-06-05 10:14:31,317 - INFO - PHASE 1: Data Validation & Cleaning...
+2026-06-05 10:14:31,317 - INFO - Loading raw data for cleaning from data/raw/marketing_campaign.csv
+2026-06-05 10:14:31,637 - INFO - Removed 0 duplicates.
+2026-06-05 10:14:31,637 - INFO - Validating dates...
+2026-06-05 10:14:31,648 - WARNING - Found 8099 invalid dates. Filling with most frequent date.
+2026-06-05 10:14:31,652 - INFO - Analyzing and handling missing values...
+2026-06-05 10:14:31,673 - INFO - Null Percentages:
+Campaign_ID         3.250233
+Campaign_Type       5.014850
+Target_Audience     4.903249
+Duration            4.993850
+Channel_Used        4.969250
+Impressions         4.934449
+Clicks              4.934449
+Leads               4.854049
+Conversions         4.800048
+Revenue             4.982450
+Acquisition_Cost    4.896649
+ROI                 4.978850
+Language            4.979450
+Engagement_Score    4.848648
+Customer_Segment    4.905049
+2026-06-05 10:14:31,935 - INFO - Recalculating ROI for consistency...
+2026-06-05 10:14:31,937 - INFO - Capping outliers at 1st and 99th percentiles...
+2026-06-05 10:14:32,803 - INFO - Cleaned data saved to data/processed/cleaned_data.csv (Final Rows: 166665)
+2026-06-05 10:14:32,805 - INFO - PHASE 2: Business Feature Engineering...
+2026-06-05 10:14:32,805 - INFO - Loading cleaned data for feature engineering from data/processed/cleaned_data.csv
+2026-06-05 10:14:33,030 - INFO - Creating Profit_Flag (ROI > 0 threshold)...
+2026-06-05 10:14:33,046 - INFO - Profit_Flag distribution:
+Profit_Flag
+Profit    166654
+Loss          11
+2026-06-05 10:14:33,046 - INFO - Applying multi-label encoding for Channel_Used...
+2026-06-05 10:14:33,317 - INFO - Calculating advanced Marketing KPIs...
+2026-06-05 10:14:35,502 - INFO - Engineered data saved to data/processed/engineered_data.csv. Total features: 37
+2026-06-05 10:14:35,506 - INFO - PHASE 3: Exploratory Data Analysis & Visualization...
+2026-06-05 10:14:35,506 - INFO - Loading engineered data for EDA from data/processed/engineered_data.csv
+2026-06-05 10:14:35,950 - INFO - Analyzing Brand performance...
+2026-06-05 10:14:36,132 - INFO - Analyzing Campaign Types...
+2026-06-05 10:14:36,285 - INFO - Analyzing Channels...
+2026-06-05 10:14:36,388 - INFO - Analyzing Segments and Languages...
+2026-06-05 10:14:36,672 - INFO - Analyzing Revenue Trends...
+2026-06-05 10:14:36,752 - INFO - Generating Correlation Heatmap...
+2026-06-05 10:14:37,358 - INFO - Generating Distributions...
+2026-06-05 10:14:37,709 - INFO - EDA visualizations generated successfully.
+2026-06-05 10:14:37,716 - INFO - PHASE 4: Training Revenue Prediction Models...
+2026-06-05 10:14:37,716 - INFO - Loading data for regression training from data/processed/engineered_data.csv
+2026-06-05 10:14:38,218 - INFO - Training and Tuning Linear Regression...
+2026-06-05 10:14:39,539 - INFO - Linear Regression Results -> RMSE: 246620.23, R2: 0.70
+2026-06-05 10:14:39,539 - INFO - Training and Tuning Random Forest...
+2026-06-05 10:22:12,748 - INFO - Random Forest Results -> RMSE: 237030.18, R2: 0.73
+2026-06-05 10:22:12,749 - INFO - Training and Tuning Gradient Boosting...
+2026-06-05 10:23:52,670 - INFO - Gradient Boosting Results -> RMSE: 237183.38, R2: 0.73
+2026-06-05 10:23:52,671 - INFO - Training and Tuning XGBoost...
+2026-06-05 10:23:56,786 - INFO - XGBoost Results -> RMSE: 236986.22, R2: 0.73
+2026-06-05 10:23:56,789 - INFO - Winner: XGBoost (R2: 0.73)
+2026-06-05 10:23:56,964 - INFO - Saved best regression model to models/revenue_model.pkl
+2026-06-05 10:23:56,979 - INFO - PHASE 5: Training Profitability Classification Models...
+2026-06-05 10:23:56,979 - INFO - Loading data for classification training from data/processed/engineered_data.csv
+2026-06-05 10:23:57,547 - INFO - Training and Tuning Logistic Regression...
+2026-06-05 10:24:31,445 - INFO - Logistic Regression Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:24:31,445 - INFO - Training and Tuning Random Forest...
+2026-06-05 10:24:38,648 - INFO - Random Forest Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:24:38,648 - INFO - Training and Tuning Gradient Boosting...
+2026-06-05 10:25:42,648 - INFO - Gradient Boosting Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:25:42,648 - INFO - Training and Tuning XGBoost...
+2026-06-05 10:25:44,955 - INFO - XGBoost Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:25:44,956 - INFO - Winner: Random Forest (F1: 1.00)
+2026-06-05 10:25:45,119 - INFO - Saved best classification model to models/profit_classifier.pkl
+2026-06-05 10:25:45,128 - INFO - PHASE 6: System Evaluation & Aggregation...
+2026-06-05 10:25:45,128 - INFO - Starting Final Model Evaluation...
+2026-06-05 10:25:45,135 - INFO - 
+--- Regression Model Comparison ---
+                            RMSE            MAE        R2
+XGBoost            236986.219517  160255.494783  0.726688
+Random Forest      237030.176606  159910.047700  0.726586
+Gradient Boosting  237183.375645  161107.346003  0.726233
+Linear Regression  246620.234240  165431.858328  0.704014
+2026-06-05 10:25:45,135 - INFO - Winner: XGBoost
+2026-06-05 10:25:45,152 - INFO - 
+--- Classification Model Comparison ---
+                     Accuracy  Precision   Recall       F1   ROC_AUC
+Random Forest         0.99994    0.99994  1.00000  0.99997  0.999175
+XGBoost               0.99994    0.99994  1.00000  0.99997  0.999745
+Gradient Boosting     0.99982    0.99994  0.99988  0.99991  0.998717
+Logistic Regression   0.99916    0.99997  0.99919  0.99958  0.998830
+2026-06-05 10:25:45,152 - INFO - Winner: Random Forest
+2026-06-05 10:25:45,152 - INFO - ==================================================
+2026-06-05 10:25:45,152 - INFO - PIPELINE EXECUTION COMPLETE
+2026-06-05 10:25:45,152 - INFO - Streamlit Dashboard: `streamlit run app/streamlit_app.py` or `python -m streamlit run app/streamlit_app.py` 
+2026-06-05 10:25:45,152 - INFO - ==================================================
+2026-06-05 10:34:12,384 - INFO - ==================================================
+2026-06-05 10:34:12,385 - INFO - STARTING DATA MERGING PHASE
+2026-06-05 10:34:12,385 - INFO - Looking for source files in: C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\source
+2026-06-05 10:34:12,450 - INFO - Loaded Nykaa dataset: 55555 rows, 16 columns
+2026-06-05 10:34:12,512 - INFO - Loaded Purplle dataset: 55555 rows, 16 columns
+2026-06-05 10:34:12,577 - INFO - Loaded Tira dataset: 55555 rows, 16 columns
+2026-06-05 10:34:12,582 - INFO - Merged Dataset Statistics:
+2026-06-05 10:34:12,582 - INFO - Total Rows: 166665
+2026-06-05 10:34:12,582 - INFO - Total Columns: 17
+2026-06-05 10:34:13,327 - INFO - SUCCESS: Saved merged dataset to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\raw\marketing_campaign.csv
+2026-06-05 10:34:13,327 - INFO - ==================================================
+2026-06-05 10:34:42,730 - INFO - ==================================================
+2026-06-05 10:34:42,730 - INFO - STARTING MARKETING INTELLIGENCE PIPELINE
+2026-06-05 10:34:42,730 - INFO - ==================================================
+2026-06-05 10:34:42,730 - INFO - Step 0: Validating Project Structure...
+2026-06-05 10:34:42,730 - INFO - - Data Source: PASS
+2026-06-05 10:34:42,730 - INFO - - Data Raw: PASS
+2026-06-05 10:34:42,730 - INFO - - Data Processed: PASS
+2026-06-05 10:34:42,730 - INFO - - Models: PASS
+2026-06-05 10:34:42,730 - INFO - - Reports: PASS
+2026-06-05 10:34:42,730 - INFO - - App: PASS
+2026-06-05 10:34:42,730 - INFO - - Source Code: PASS
+2026-06-05 10:34:42,730 - INFO - PHASE 1: Data Validation & Cleaning...
+2026-06-05 10:34:42,731 - INFO - Loading raw data for cleaning from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\raw\marketing_campaign.csv
+2026-06-05 10:34:43,045 - INFO - Removed 0 duplicates.
+2026-06-05 10:34:43,045 - INFO - Validating dates...
+2026-06-05 10:34:43,058 - WARNING - Found 8099 invalid dates. Filling with most frequent date.
+2026-06-05 10:34:43,063 - INFO - Analyzing and handling missing values...
+2026-06-05 10:34:43,085 - INFO - Null Percentages:
+Campaign_ID         3.250233
+Campaign_Type       5.014850
+Target_Audience     4.903249
+Duration            4.993850
+Channel_Used        4.969250
+Impressions         4.934449
+Clicks              4.934449
+Leads               4.854049
+Conversions         4.800048
+Revenue             4.982450
+Acquisition_Cost    4.896649
+ROI                 4.978850
+Language            4.979450
+Engagement_Score    4.848648
+Customer_Segment    4.905049
+2026-06-05 10:34:43,349 - INFO - Recalculating ROI for consistency...
+2026-06-05 10:34:43,351 - INFO - Capping outliers at 1st and 99th percentiles...
+2026-06-05 10:34:44,220 - INFO - Cleaned data saved to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\cleaned_data.csv (Final Rows: 166665)
+2026-06-05 10:34:44,223 - INFO - PHASE 2: Business Feature Engineering...
+2026-06-05 10:34:44,223 - INFO - Loading cleaned data for feature engineering from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\cleaned_data.csv
+2026-06-05 10:34:44,439 - INFO - Creating Profit_Flag (ROI > 0 threshold)...
+2026-06-05 10:34:44,456 - INFO - Profit_Flag distribution:
+Profit_Flag
+Profit    166654
+Loss          11
+2026-06-05 10:34:44,456 - INFO - Applying multi-label encoding for Channel_Used...
+2026-06-05 10:34:44,752 - INFO - Calculating advanced Marketing KPIs...
+2026-06-05 10:34:46,935 - INFO - Engineered data saved to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv. Total features: 37
+2026-06-05 10:34:46,940 - INFO - PHASE 3: Exploratory Data Analysis & Visualization...
+2026-06-05 10:34:46,940 - INFO - Loading engineered data for EDA from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 10:34:47,386 - INFO - Analyzing Brand performance...
+2026-06-05 10:34:47,558 - INFO - Analyzing Campaign Types...
+2026-06-05 10:34:47,709 - INFO - Analyzing Channels...
+2026-06-05 10:34:47,807 - INFO - Analyzing Segments and Languages...
+2026-06-05 10:34:48,092 - INFO - Analyzing Revenue Trends...
+2026-06-05 10:34:48,171 - INFO - Generating Correlation Heatmap...
+2026-06-05 10:34:48,785 - INFO - Generating Distributions...
+2026-06-05 10:34:49,144 - INFO - EDA visualizations generated successfully.
+2026-06-05 10:34:49,151 - INFO - PHASE 4: Training Revenue Prediction Models...
+2026-06-05 10:34:49,151 - INFO - Loading data for regression training from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 10:34:49,659 - INFO - Training and Tuning Linear Regression...
+2026-06-05 10:34:50,990 - INFO - Linear Regression Results -> RMSE: 246620.23, R2: 0.70
+2026-06-05 10:34:50,990 - INFO - Training and Tuning Random Forest...
+2026-06-05 10:42:20,078 - INFO - Random Forest Results -> RMSE: 237030.18, R2: 0.73
+2026-06-05 10:42:20,079 - INFO - Training and Tuning Gradient Boosting...
+2026-06-05 10:44:00,811 - INFO - Gradient Boosting Results -> RMSE: 237183.38, R2: 0.73
+2026-06-05 10:44:00,811 - INFO - Training and Tuning XGBoost...
+2026-06-05 10:44:04,680 - INFO - XGBoost Results -> RMSE: 236986.22, R2: 0.73
+2026-06-05 10:44:04,682 - INFO - Winner: XGBoost (R2: 0.73)
+2026-06-05 10:44:04,863 - INFO - Saved best regression model to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\models\revenue_model.pkl
+2026-06-05 10:44:04,885 - INFO - PHASE 5: Training Profitability Classification Models...
+2026-06-05 10:44:04,885 - INFO - Loading data for classification training from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 10:44:05,454 - INFO - Training and Tuning Logistic Regression...
+2026-06-05 10:44:39,373 - INFO - Logistic Regression Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:44:39,373 - INFO - Training and Tuning Random Forest...
+2026-06-05 10:44:46,646 - INFO - Random Forest Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:44:46,646 - INFO - Training and Tuning Gradient Boosting...
+2026-06-05 10:45:50,943 - INFO - Gradient Boosting Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:45:50,943 - INFO - Training and Tuning XGBoost...
+2026-06-05 10:45:53,310 - INFO - XGBoost Results -> F1: 1.00, ACC: 1.00
+2026-06-05 10:45:53,310 - INFO - Winner: Random Forest (F1: 1.00)
+2026-06-05 10:45:53,478 - INFO - Saved best classification model to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\models\profit_classifier.pkl
+2026-06-05 10:45:53,487 - INFO - PHASE 6: System Evaluation & Aggregation...
+2026-06-05 10:45:53,487 - INFO - Starting Final Model Evaluation...
+2026-06-05 10:45:53,493 - INFO - 
+--- Regression Model Comparison ---
+                            RMSE            MAE        R2
+XGBoost            236986.219517  160255.494783  0.726688
+Random Forest      237030.176606  159910.047700  0.726586
+Gradient Boosting  237183.375645  161107.346003  0.726233
+Linear Regression  246620.234240  165431.858328  0.704014
+2026-06-05 10:45:53,493 - INFO - Winner: XGBoost
+2026-06-05 10:45:53,508 - INFO - 
+--- Classification Model Comparison ---
+                     Accuracy  Precision   Recall       F1   ROC_AUC
+Random Forest         0.99994    0.99994  1.00000  0.99997  0.999175
+XGBoost               0.99994    0.99994  1.00000  0.99997  0.999745
+Gradient Boosting     0.99982    0.99994  0.99988  0.99991  0.998717
+Logistic Regression   0.99916    0.99997  0.99919  0.99958  0.998830
+2026-06-05 10:45:53,508 - INFO - Winner: Random Forest
+2026-06-05 10:45:53,508 - INFO - 
+==================================================
+2026-06-05 10:45:53,508 - INFO - FINAL PIPELINE VALIDATION CHECKLIST
+2026-06-05 10:45:53,508 - INFO - ==================================================
+2026-06-05 10:45:53,508 - INFO - Data Merging             : PASS
+2026-06-05 10:45:53,508 - INFO - Data Cleaning            : PASS
+2026-06-05 10:45:53,508 - INFO - Feature Engineering      : PASS
+2026-06-05 10:45:53,508 - INFO - EDA Reports              : PASS
+2026-06-05 10:45:53,509 - INFO - Regression Modeling      : PASS
+2026-06-05 10:45:53,509 - INFO - Classification Modeling  : PASS
+2026-06-05 10:45:53,509 - INFO - System Evaluation        : PASS
+2026-06-05 10:45:53,509 - INFO - ==================================================
+2026-06-05 10:45:53,509 - INFO - SUCCESS: Full Pipeline Executed Successfully!
+2026-06-05 10:45:53,509 - INFO - Streamlit Dashboard: streamlit run app/streamlit_app.py
+2026-06-05 10:45:53,509 - INFO - ==================================================
+2026-06-05 11:00:19,623 - INFO - ==================================================
+2026-06-05 11:00:19,623 - INFO - STARTING MARKETING INTELLIGENCE PIPELINE
+2026-06-05 11:00:19,623 - INFO - ==================================================
+2026-06-05 11:00:19,623 - INFO - Step 0: Validating Project Structure...
+2026-06-05 11:00:19,623 - INFO - - Data Source: PASS
+2026-06-05 11:00:19,623 - INFO - - Data Raw: PASS
+2026-06-05 11:00:19,623 - INFO - - Data Processed: PASS
+2026-06-05 11:00:19,623 - INFO - - Models: PASS
+2026-06-05 11:00:19,623 - INFO - - Reports: PASS
+2026-06-05 11:00:19,623 - INFO - - App: PASS
+2026-06-05 11:00:19,623 - INFO - - Source Code: PASS
+2026-06-05 11:00:19,623 - INFO - PHASE 1: Data Validation & Cleaning...
+2026-06-05 11:00:19,623 - INFO - Loading raw data for cleaning from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\raw\marketing_campaign.csv
+2026-06-05 11:00:19,940 - INFO - Removed 0 duplicates.
+2026-06-05 11:00:19,940 - INFO - Validating dates...
+2026-06-05 11:00:19,952 - WARNING - Found 8099 invalid dates. Filling with most frequent date.
+2026-06-05 11:00:19,956 - INFO - Analyzing and handling missing values...
+2026-06-05 11:00:19,979 - INFO - Null Percentages:
+Campaign_ID         3.250233
+Campaign_Type       5.014850
+Target_Audience     4.903249
+Duration            4.993850
+Channel_Used        4.969250
+Impressions         4.934449
+Clicks              4.934449
+Leads               4.854049
+Conversions         4.800048
+Revenue             4.982450
+Acquisition_Cost    4.896649
+ROI                 4.978850
+Language            4.979450
+Engagement_Score    4.848648
+Customer_Segment    4.905049
+2026-06-05 11:00:20,250 - INFO - Recalculating ROI for consistency...
+2026-06-05 11:00:20,252 - INFO - Capping outliers at 1st and 99th percentiles...
+2026-06-05 11:00:21,115 - INFO - Cleaned data saved to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\cleaned_data.csv (Final Rows: 166665)
+2026-06-05 11:00:21,118 - INFO - PHASE 2: Business Feature Engineering...
+2026-06-05 11:00:21,119 - INFO - Loading cleaned data for feature engineering from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\cleaned_data.csv
+2026-06-05 11:00:21,356 - INFO - Creating Profit_Flag (ROI > 0 threshold)...
+2026-06-05 11:00:21,374 - INFO - Profit_Flag distribution:
+Profit_Flag
+Profit    166654
+Loss          11
+2026-06-05 11:00:21,374 - INFO - Applying multi-label encoding for Channel_Used...
+2026-06-05 11:00:21,657 - INFO - Calculating advanced Marketing KPIs...
+2026-06-05 11:00:23,839 - INFO - Engineered data saved to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv. Total features: 37
+2026-06-05 11:00:23,843 - INFO - PHASE 3: Exploratory Data Analysis & Visualization...
+2026-06-05 11:00:23,843 - INFO - Loading engineered data for EDA from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 11:00:24,283 - INFO - Analyzing Brand performance...
+2026-06-05 11:00:24,464 - INFO - Analyzing Campaign Types...
+2026-06-05 11:00:24,614 - INFO - Analyzing Channels...
+2026-06-05 11:00:24,710 - INFO - Analyzing Segments and Languages...
+2026-06-05 11:00:24,991 - INFO - Analyzing Revenue Trends...
+2026-06-05 11:00:25,072 - INFO - Generating Correlation Heatmap...
+2026-06-05 11:00:25,680 - INFO - Generating Distributions...
+2026-06-05 11:00:26,042 - INFO - EDA visualizations generated successfully.
+2026-06-05 11:00:26,050 - INFO - PHASE 4: Training Revenue Prediction Models...
+2026-06-05 11:00:26,050 - INFO - Loading data for regression training from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 11:00:26,566 - INFO - Training Linear Regression...
+2026-06-05 11:00:27,829 - INFO - Training Random Forest...
+2026-06-05 11:03:13,766 - INFO - Training XGBoost...
+2026-06-05 11:03:16,683 - INFO - Regression training complete. Winner: Random Forest
+2026-06-05 11:03:16,693 - INFO - PHASE 5: Training Profitability Classification Models...
+2026-06-05 11:03:16,693 - INFO - Loading data for classification training from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 11:03:17,230 - INFO - Training Logistic Regression...
+2026-06-05 11:03:44,135 - INFO - Training Random Forest...
+2026-06-05 11:03:49,814 - INFO - Classification training complete. Winner: Random Forest
+2026-06-05 11:03:49,823 - INFO - PHASE 6: System Evaluation & Aggregation...
+2026-06-05 11:03:49,824 - INFO - Starting Final Model Evaluation...
+2026-06-05 11:03:49,845 - INFO - 
+--- Regression Model Comparison ---
+                            RMSE            MAE        R2
+Random Forest      237065.137808  159894.926996  0.726505
+XGBoost            237596.466977  160208.023393  0.725278
+Linear Regression  246620.234240  165431.858328  0.704014
+2026-06-05 11:03:49,845 - INFO - Winner: Random Forest
+2026-06-05 11:03:49,856 - INFO - 
+--- Classification Model Comparison ---
+                     Accuracy  Precision   Recall       F1   ROC_AUC
+Random Forest         0.99994    0.99994  1.00000  0.99997  0.999175
+Logistic Regression   0.99880    0.99997  0.99883  0.99940  0.998560
+2026-06-05 11:03:49,856 - INFO - Winner: Random Forest
+2026-06-05 11:03:49,856 - INFO - 
+==================================================
+2026-06-05 11:03:49,856 - INFO - FINAL PIPELINE VALIDATION CHECKLIST
+2026-06-05 11:03:49,856 - INFO - ==================================================
+2026-06-05 11:03:49,856 - INFO - Data Merging             : PASS
+2026-06-05 11:03:49,856 - INFO - Data Cleaning            : PASS
+2026-06-05 11:03:49,856 - INFO - Feature Engineering      : PASS
+2026-06-05 11:03:49,856 - INFO - EDA Reports              : PASS
+2026-06-05 11:03:49,856 - INFO - Regression Modeling      : PASS
+2026-06-05 11:03:49,856 - INFO - Classification Modeling  : PASS
+2026-06-05 11:03:49,856 - INFO - System Evaluation        : PASS
+2026-06-05 11:03:49,856 - INFO - ==================================================
+2026-06-05 11:03:49,856 - INFO - SUCCESS: Full Pipeline Executed Successfully!
+2026-06-05 11:03:49,856 - INFO - Streamlit Dashboard: streamlit run app/streamlit_app.py
+2026-06-05 11:03:49,856 - INFO - ==================================================
+2026-06-05 14:33:19,245 - INFO - ==================================================
+2026-06-05 14:33:19,245 - INFO - STARTING MARKETING INTELLIGENCE PIPELINE
+2026-06-05 14:33:19,246 - INFO - ==================================================
+2026-06-05 14:33:19,246 - INFO - Step 0: Validating Project Structure...
+2026-06-05 14:33:19,246 - INFO - - Data Source: PASS
+2026-06-05 14:33:19,246 - INFO - - Data Raw: PASS
+2026-06-05 14:33:19,246 - INFO - - Data Processed: PASS
+2026-06-05 14:33:19,246 - INFO - - Models: PASS
+2026-06-05 14:33:19,246 - INFO - - Reports: PASS
+2026-06-05 14:33:19,246 - INFO - - App: PASS
+2026-06-05 14:33:19,246 - INFO - - Source Code: PASS
+2026-06-05 14:33:19,247 - INFO - PHASE 1: Data Validation & Cleaning...
+2026-06-05 14:33:19,247 - INFO - Loading raw data for cleaning from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\raw\marketing_campaign.csv
+2026-06-05 14:33:19,579 - INFO - Removed 0 duplicates.
+2026-06-05 14:33:19,579 - INFO - Validating dates...
+2026-06-05 14:33:19,592 - WARNING - Found 8099 invalid dates. Filling with most frequent date.
+2026-06-05 14:33:19,597 - INFO - Analyzing and handling missing values...
+2026-06-05 14:33:19,621 - INFO - Null Percentages:
+Campaign_ID         3.250233
+Campaign_Type       5.014850
+Target_Audience     4.903249
+Duration            4.993850
+Channel_Used        4.969250
+Impressions         4.934449
+Clicks              4.934449
+Leads               4.854049
+Conversions         4.800048
+Revenue             4.982450
+Acquisition_Cost    4.896649
+ROI                 4.978850
+Language            4.979450
+Engagement_Score    4.848648
+Customer_Segment    4.905049
+2026-06-05 14:33:19,883 - INFO - Recalculating ROI for consistency...
+2026-06-05 14:33:19,885 - INFO - Capping outliers at 1st and 99th percentiles...
+2026-06-05 14:33:20,786 - INFO - Cleaned data saved to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\cleaned_data.csv (Final Rows: 166665)
+2026-06-05 14:33:20,789 - INFO - PHASE 2: Business Feature Engineering...
+2026-06-05 14:33:20,789 - INFO - Loading cleaned data for feature engineering from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\cleaned_data.csv
+2026-06-05 14:33:21,004 - INFO - Creating Profit_Flag (ROI > 0 threshold)...
+2026-06-05 14:33:21,022 - INFO - Profit_Flag distribution:
+Profit_Flag
+Profit    166654
+Loss          11
+2026-06-05 14:33:21,023 - INFO - Applying multi-label encoding for Channel_Used...
+2026-06-05 14:33:21,303 - INFO - Calculating advanced Marketing KPIs...
+2026-06-05 14:33:23,535 - INFO - Engineered data saved to C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv. Total features: 37
+2026-06-05 14:33:23,540 - INFO - PHASE 3: Exploratory Data Analysis & Visualization...
+2026-06-05 14:33:23,540 - INFO - Loading engineered data for EDA from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 14:33:24,001 - INFO - Analyzing Brand performance...
+2026-06-05 14:33:24,197 - INFO - Analyzing Campaign Types...
+2026-06-05 14:33:24,358 - INFO - Analyzing Channels...
+2026-06-05 14:33:24,468 - INFO - Analyzing Segments and Languages...
+2026-06-05 14:33:24,757 - INFO - Analyzing Revenue Trends...
+2026-06-05 14:33:24,851 - INFO - Generating Correlation Heatmap...
+2026-06-05 14:33:25,586 - INFO - Generating Distributions...
+2026-06-05 14:33:25,982 - INFO - EDA visualizations generated successfully.
+2026-06-05 14:33:25,991 - INFO - PHASE 4: Training Revenue Prediction Models...
+2026-06-05 14:33:25,991 - INFO - Loading data for regression training from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 14:33:26,528 - INFO - Training Linear Regression...
+2026-06-05 14:33:27,923 - INFO - Training Random Forest...
+2026-06-05 14:36:14,157 - INFO - Training XGBoost...
+2026-06-05 14:36:17,798 - INFO - Regression training complete. Winner: Random Forest
+2026-06-05 14:36:17,809 - INFO - PHASE 5: Training Profitability Classification Models...
+2026-06-05 14:36:17,809 - INFO - Loading data for classification training from C:\Yoge Studies\Guvi Projects\marketing_campaign_analysis\marketing_campaign_project\data\processed\engineered_data.csv
+2026-06-05 14:36:18,371 - INFO - Training Logistic Regression...
+2026-06-05 14:36:45,570 - INFO - Training Random Forest...
+2026-06-05 14:36:51,422 - INFO - Classification training complete. Winner: Random Forest
+2026-06-05 14:36:51,431 - INFO - PHASE 6: System Evaluation & Aggregation...
+2026-06-05 14:36:51,431 - INFO - Starting Final Model Evaluation...
+2026-06-05 14:36:51,453 - INFO - 
+--- Regression Model Comparison ---
+                            RMSE            MAE        R2
+Random Forest      237065.137808  159894.926996  0.726505
+XGBoost            237596.466977  160208.023393  0.725278
+Linear Regression  246620.234240  165431.858328  0.704014
+2026-06-05 14:36:51,453 - INFO - Winner: Random Forest
+2026-06-05 14:36:51,463 - INFO - 
+--- Classification Model Comparison ---
+                     Accuracy  Precision   Recall       F1   ROC_AUC
+Random Forest         0.99994    0.99994  1.00000  0.99997  0.999175
+Logistic Regression   0.99880    0.99997  0.99883  0.99940  0.998560
+2026-06-05 14:36:51,463 - INFO - Winner: Random Forest
+2026-06-05 14:36:51,463 - INFO - 
+==================================================
+2026-06-05 14:36:51,463 - INFO - FINAL PIPELINE VALIDATION CHECKLIST
+2026-06-05 14:36:51,463 - INFO - ==================================================
+2026-06-05 14:36:51,463 - INFO - Data Merging             : PASS
+2026-06-05 14:36:51,463 - INFO - Data Cleaning            : PASS
+2026-06-05 14:36:51,463 - INFO - Feature Engineering      : PASS
+2026-06-05 14:36:51,463 - INFO - EDA Reports              : PASS
+2026-06-05 14:36:51,463 - INFO - Regression Modeling      : PASS
+2026-06-05 14:36:51,463 - INFO - Classification Modeling  : PASS
+2026-06-05 14:36:51,463 - INFO - System Evaluation        : PASS
+2026-06-05 14:36:51,463 - INFO - ==================================================
+2026-06-05 14:36:51,463 - INFO - SUCCESS: Full Pipeline Executed Successfully!
+2026-06-05 14:36:51,463 - INFO - Streamlit Dashboard: streamlit run app/streamlit_app.py
+2026-06-05 14:36:51,463 - INFO - ==================================================

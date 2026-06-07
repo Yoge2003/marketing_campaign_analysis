@@ -1,42 +1,49 @@
-import os
+import joblib
+import pandas as pd
 import logging
+import os
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("pipeline.log"),
+        logging.StreamHandler()
+    ]
+)
 
 def evaluate_and_report():
     """
-    Combines individual model reports into a final model_report.md
+    Summarizes model performance from saved artifacts.
     """
-    logging.info("Generating Final Model Report...")
-    
-    regression_content = ""
-    if os.path.exists('reports/regression_report.md'):
-        with open('reports/regression_report.md', 'r') as f:
-            regression_content = f.read()
+    logging.info("Starting Final Model Evaluation...")
 
-    classification_content = ""
-    if os.path.exists('reports/classification_report.md'):
-        with open('reports/classification_report.md', 'r') as f:
-            classification_content = f.read()
-
-    final_report = f"""# Final Model Evaluation Report
-
-This report summarizes the performance of both Regression (Revenue Prediction) and Classification (Profit/Loss Prediction) models.
-
-{regression_content}
-
----
-
-{classification_content}
-
-## Conclusion
-The best performing models have been selected and saved in the `models/` directory for deployment in the Streamlit application.
-"""
-    
-    with open('reports/model_report.md', 'w') as f:
-        f.write(final_report)
+    # 1. Regression Summary
+    reg_path = 'models/revenue_model.pkl'
+    if os.path.exists(reg_path):
+        data = joblib.load(reg_path)
+        metrics = data['metrics']
+        best_name = data['best_name']
         
-    logging.info("Final model_report.md generated successfully.")
+        reg_df = pd.DataFrame(metrics).T.sort_values('R2', ascending=False)
+        logging.info("\n--- Regression Model Comparison ---\n" + reg_df.to_string())
+        logging.info(f"Winner: {best_name}")
+    else:
+        logging.warning("Regression model not found.")
+
+    # 2. Classification Summary
+    clf_path = 'models/profit_classifier.pkl'
+    if os.path.exists(clf_path):
+        data = joblib.load(clf_path)
+        metrics = data['metrics']
+        best_name = data['best_name']
+        
+        clf_df = pd.DataFrame(metrics).T.sort_values('F1', ascending=False)
+        logging.info("\n--- Classification Model Comparison ---\n" + clf_df.to_string())
+        logging.info(f"Winner: {best_name}")
+    else:
+        logging.warning("Classification model not found.")
 
 if __name__ == "__main__":
     evaluate_and_report()

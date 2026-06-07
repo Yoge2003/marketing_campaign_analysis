@@ -1,0 +1,26 @@
+2026-06-05 10:29:35,600 - INFO - ==================================================
+2026-06-05 10:29:35,600 - INFO - STARTING MARKETING INTELLIGENCE PIPELINE
+2026-06-05 10:29:35,600 - INFO - ==================================================
+2026-06-05 10:29:35,600 - INFO - PHASE 1: Data Validation & Cleaning...
+2026-06-05 10:29:35,600 - INFO - Loading raw data for cleaning from data/raw/marketing_campaign.csv
+2026-06-05 10:29:35,600 - ERROR - Input file not found: data/raw/marketing_campaign.csv
+2026-06-05 10:29:35,600 - INFO - PHASE 2: Business Feature Engineering...
+2026-06-05 10:29:35,600 - INFO - Loading cleaned data for feature engineering from data/processed/cleaned_data.csv
+2026-06-05 10:29:35,601 - ERROR - Input file not found: data/processed/cleaned_data.csv
+2026-06-05 10:29:35,601 - INFO - PHASE 3: Exploratory Data Analysis & Visualization...
+2026-06-05 10:29:35,601 - INFO - Loading engineered data for EDA from data/processed/engineered_data.csv
+2026-06-05 10:29:35,601 - ERROR - Input file not found: data/processed/engineered_data.csv
+2026-06-05 10:29:35,601 - INFO - PHASE 4: Training Revenue Prediction Models...
+2026-06-05 10:29:35,601 - INFO - Loading data for regression training from data/processed/engineered_data.csv
+2026-06-05 10:29:35,601 - ERROR - Input file not found: data/processed/engineered_data.csv
+2026-06-05 10:29:35,601 - INFO - PHASE 5: Training Profitability Classification Models...
+2026-06-05 10:29:35,601 - INFO - Loading data for classification training from data/processed/engineered_data.csv
+2026-06-05 10:29:35,601 - ERROR - Input file not found: data/processed/engineered_data.csv
+2026-06-05 10:29:35,601 - INFO - PHASE 6: System Evaluation & Aggregation...
+2026-06-05 10:29:35,602 - INFO - Starting Final Model Evaluation...
+2026-06-05 10:29:35,602 - WARNING - Regression model not found.
+2026-06-05 10:29:35,602 - WARNING - Classification model not found.
+2026-06-05 10:29:35,602 - INFO - ==================================================
+2026-06-05 10:29:35,602 - INFO - PIPELINE EXECUTION COMPLETE
+2026-06-05 10:29:35,602 - INFO - Streamlit Dashboard: `streamlit run app/streamlit_app.py` or `python -m streamlit run app/streamlit_app.py` 
+2026-06-05 10:29:35,602 - INFO - ==================================================

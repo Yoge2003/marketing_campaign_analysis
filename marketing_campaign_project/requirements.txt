@@ -7,3 +7,4 @@ scikit-learn
 joblib
 streamlit
 mysql-connector-python
+xgboost
